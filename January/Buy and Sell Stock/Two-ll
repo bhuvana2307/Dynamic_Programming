@@ -1,0 +1,39 @@
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        # Recursion
+        def find(i,buy):
+            if i>=len(prices):
+                return 0 
+            if buy:
+                profit=max(-prices[i]+find(i+1,0),find(i+1,1)) # Two cases: Now I bought the stock on that day. I will sell it on other day ?? or else let me buy a stock on some other day ?
+            else:
+                profit=max(prices[i]+find(i+1,1),find(i+1,0)) # Two cases: Now I have selled already taken stock .so now will buy the other future stock ? or else No I will not sell now ,may be in  future I will sell to get more profit
+            return profit
+        return find(0,1)
+
+        #memoization 
+        memo={}
+        def find(i,buy):
+            if (i,buy) in memo:
+                return memo[(i,buy)]
+            if i>=len(prices):
+                return 0 
+            if buy:
+                profit=max(-prices[i]+find(i+1,0),find(i+1,1))
+            else:
+                profit=max(prices[i]+find(i+1,1),find(i+1,0))
+            memo[(i,buy)]=profit
+            return profit
+        return find(0,1)
+
+        #Tabulation 
+        l=len(prices)
+        dp=[[0]*2 for _ in range(l+1)] 
+        for i in range(l-1,-1,-1):
+            for buy in range(2):
+                if buy:
+                    dp[i][buy]=max(-prices[i]+dp[i+1][0],dp[i+1][1])
+                else:
+                    dp[i][buy]=max(prices[i]+dp[i+1][1],dp[i+1][0])
+        return dp[0][1]
+
