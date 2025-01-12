@@ -1,0 +1,32 @@
+class Solution:
+    def stoneGame(self, piles: List[int]) -> bool:
+        #Recursion
+        tot=sum(piles)
+        l=len(piles)
+        def findWhoWins(i,count,matchplayed):
+            if i>=len(piles) :
+                return count<tot-count
+
+            if matchplayed>=(len(piles))//2:
+                return count>tot-count
+            return findWhoWins(i+2,count+piles[i],matchplayed+1) or findWhoWins(i+1,count,matchplayed) # Based on odd,even position
+        
+        return findWhoWins(0,0,0)
+
+        #Memoization
+        matc=(len(piles))//2
+        memo=[[-1*matc]  for _ in range(l)]
+        tot=sum(piles)
+        l=len(piles)
+        def findWhoWins(i,count,matchplayed):
+            if memo[i][matchplayed]!=-1:
+                return memo[i][count][matchplayed]
+            if i>=len(piles) :
+                return count<tot-count
+
+            if matchplayed>=(len(piles))//2:
+                return count>tot-count
+            memo[i][matchplayed]=findWhoWins(i+2,count+piles[i],matchplayed+1) or findWhoWins(i+1,count,matchplayed)
+            return memo[i][matchplayed]
+        
+        return findWhoWins(0,0,0)
