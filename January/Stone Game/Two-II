@@ -1,0 +1,42 @@
+class Solution:
+    def stoneGameII(self, piles: List[int]) -> int:
+        # Recursion
+        def find(alice,i,m):
+            if i>=len(piles):
+                return 0
+            tot=0
+            res=0 if alice else float('inf')
+            for x in range(1,2*m+1):
+                if i+x>len(piles):
+                    break
+                tot+=piles[i+x-1]
+                if alice:
+                    res=max(res,tot+find(0,i+x,max(m,x))) #Alice wants to maximize as much he can by playing optimally 
+                else:
+                    res=min(res,find(1,i+x,max(m,x))) #Bob always tries to minimize the alice amount by playing optimally ...Here we dont want bob's amount
+            return res
+
+        return find(1,0,1)
+        
+        #Memoization
+        n=len(piles)
+        memo=[[[-1]*2 for _ in range(2*(n+1))] for i in range(n+1)]
+        def find(alice,i,m):
+            if i>=len(piles):
+                return 0
+            if memo[i][m][alice] !=-1:
+                return memo[i][m][alice]
+            tot=0
+            res=0 if alice else float('inf')
+            for x in range(1,2*m+1):
+                if i+x>len(piles):
+                    break
+                tot+=piles[i+x-1]
+                if alice:
+                    res=max(res,tot+find(0,i+x,max(m,x)))
+                else:
+                    res=min(res,find(1,i+x,max(m,x)))
+            memo[i][m][alice]=res
+            return res
+
+        return find(1,0,1)
